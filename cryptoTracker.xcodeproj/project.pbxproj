@@ -19,6 +19,8 @@
 		96AEEEF12B81B6A300546404 /* CoinRowView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 96AEEEF02B81B6A300546404 /* CoinRowView.swift */; };
 		96AEEEF32B81CA2500546404 /* PreviewData.swift in Sources */ = {isa = PBXBuildFile; fileRef = 96AEEEF22B81CA2500546404 /* PreviewData.swift */; };
 		96AEEEF52B81CF3E00546404 /* Double.swift in Sources */ = {isa = PBXBuildFile; fileRef = 96AEEEF42B81CF3E00546404 /* Double.swift */; };
+		96AEEEF72B81D70700546404 /* HomeViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 96AEEEF62B81D70700546404 /* HomeViewModel.swift */; };
+		96AEEEFA2B81FB1400546404 /* CoinDataService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 96AEEEF92B81FB1400546404 /* CoinDataService.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -35,6 +37,8 @@
 		96AEEEF02B81B6A300546404 /* CoinRowView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CoinRowView.swift; sourceTree = "<group>"; };
 		96AEEEF22B81CA2500546404 /* PreviewData.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PreviewData.swift; sourceTree = "<group>"; };
 		96AEEEF42B81CF3E00546404 /* Double.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Double.swift; sourceTree = "<group>"; };
+		96AEEEF62B81D70700546404 /* HomeViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HomeViewModel.swift; sourceTree = "<group>"; };
+		96AEEEF92B81FB1400546404 /* CoinDataService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CoinDataService.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -69,6 +73,7 @@
 			children = (
 				96AEEECE2B805E7C00546404 /* cryptoTrackerApp.swift */,
 				96AEEEDE2B80615300546404 /* Extensions */,
+				96AEEEF82B81FAEB00546404 /* Services */,
 				96AEEEED2B81A87700546404 /* Models */,
 				96AEEEE12B8067F600546404 /* Core */,
 				96AEEED02B805E7C00546404 /* ContentView.swift */,
@@ -126,6 +131,7 @@
 		96AEEEE42B80681900546404 /* ViewModels */ = {
 			isa = PBXGroup;
 			children = (
+				96AEEEF62B81D70700546404 /* HomeViewModel.swift */,
 			);
 			path = ViewModels;
 			sourceTree = "<group>";
@@ -153,6 +159,14 @@
 				96AEEEEE2B81A89800546404 /* CoinModel.swift */,
 			);
 			path = Models;
+			sourceTree = "<group>";
+		};
+		96AEEEF82B81FAEB00546404 /* Services */ = {
+			isa = PBXGroup;
+			children = (
+				96AEEEF92B81FB1400546404 /* CoinDataService.swift */,
+			);
+			path = Services;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -225,7 +239,9 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				96AEEEFA2B81FB1400546404 /* CoinDataService.swift in Sources */,
 				96AEEEF12B81B6A300546404 /* CoinRowView.swift in Sources */,
+				96AEEEF72B81D70700546404 /* HomeViewModel.swift in Sources */,
 				96AEEED12B805E7C00546404 /* ContentView.swift in Sources */,
 				96AEEEE62B80682F00546404 /* HomeView.swift in Sources */,
 				96AEEECF2B805E7C00546404 /* cryptoTrackerApp.swift in Sources */,

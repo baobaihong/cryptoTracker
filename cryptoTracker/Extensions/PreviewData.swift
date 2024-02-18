@@ -209,4 +209,5 @@ class PreviewData {
         ]),
         priceChangePercentage24HInCurrency: -1.4133477615191865,
         currentHoldings: 1.5)
+    let homeVM = HomeViewModel()
 }
