@@ -32,7 +32,7 @@ extension HomeView {
             CircleButtonView(iconName: showPortfolio ? "plus" : "info")
                 .animation(.none, value: showPortfolio)
                 .background(
-                CircleButtonAnimationView(animate: $showPortfolio)
+                    CircleButtonAnimationView(animate: $showPortfolio)
                 )
             Spacer()
             Text(showPortfolio ? "Portfolio" : "Live Prices")
