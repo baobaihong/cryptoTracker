@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		337CA6C62B82FCE90043FF04 /* NetworkingManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 337CA6C52B82FCE90043FF04 /* NetworkingManager.swift */; };
 		96AEEECF2B805E7C00546404 /* cryptoTrackerApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = 96AEEECE2B805E7C00546404 /* cryptoTrackerApp.swift */; };
 		96AEEED12B805E7C00546404 /* ContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 96AEEED02B805E7C00546404 /* ContentView.swift */; };
 		96AEEED62B805E7D00546404 /* Preview Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 96AEEED52B805E7D00546404 /* Preview Assets.xcassets */; };
@@ -24,6 +25,7 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
+		337CA6C52B82FCE90043FF04 /* NetworkingManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NetworkingManager.swift; sourceTree = "<group>"; };
 		96AEEECB2B805E7C00546404 /* cryptoTracker.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = cryptoTracker.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		96AEEECE2B805E7C00546404 /* cryptoTrackerApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = cryptoTrackerApp.swift; sourceTree = "<group>"; };
 		96AEEED02B805E7C00546404 /* ContentView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContentView.swift; sourceTree = "<group>"; };
@@ -52,6 +54,14 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		337CA6C42B82FBD20043FF04 /* Utilities */ = {
+			isa = PBXGroup;
+			children = (
+				337CA6C52B82FCE90043FF04 /* NetworkingManager.swift */,
+			);
+			path = Utilities;
+			sourceTree = "<group>";
+		};
 		96AEEEC22B805E7C00546404 = {
 			isa = PBXGroup;
 			children = (
@@ -72,6 +82,7 @@
 			isa = PBXGroup;
 			children = (
 				96AEEECE2B805E7C00546404 /* cryptoTrackerApp.swift */,
+				337CA6C42B82FBD20043FF04 /* Utilities */,
 				96AEEEDE2B80615300546404 /* Extensions */,
 				96AEEEF82B81FAEB00546404 /* Services */,
 				96AEEEED2B81A87700546404 /* Models */,
@@ -247,6 +258,7 @@
 				96AEEECF2B805E7C00546404 /* cryptoTrackerApp.swift in Sources */,
 				96AEEEEA2B80699700546404 /* CircleButtonView.swift in Sources */,
 				96AEEEE02B80617200546404 /* Color.swift in Sources */,
+				337CA6C62B82FCE90043FF04 /* NetworkingManager.swift in Sources */,
 				96AEEEEC2B80713C00546404 /* CircleButtonAnimationView.swift in Sources */,
 				96AEEEF32B81CA2500546404 /* PreviewData.swift in Sources */,
 				96AEEEF52B81CF3E00546404 /* Double.swift in Sources */,
