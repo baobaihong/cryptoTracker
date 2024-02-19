@@ -22,6 +22,8 @@ class NetworkingManager {
         }
     }
     
+    // create a combine publisher that asynchronously fetching data from internet.
+    // when the task complete, it publishes either a tuple that contains the fetched data and a URLResponse, or an error if the task fails
     static func download(url: URL) -> AnyPublisher<Data, any Error> {
         return URLSession.shared.dataTaskPublisher(for: url)
             .subscribe(on: DispatchQueue.global(qos: .default))
