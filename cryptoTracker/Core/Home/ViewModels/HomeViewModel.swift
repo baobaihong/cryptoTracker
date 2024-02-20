@@ -10,6 +10,13 @@ import Combine
 import SwiftUI
 
 @Observable class HomeViewModel {
+    
+    var statistics: [StatisticModel] = [
+        StatisticModel(title: "Title", value: "Value", percentageChange: 1),
+        StatisticModel(title: "Title", value: "Value"),
+        StatisticModel(title: "Title", value: "Value"),
+        StatisticModel(title: "Title", value: "Value", percentageChange: -7),
+    ]
     var allCoins: [CoinModel] = []
     var portfolioCoins: [CoinModel] = []
     
