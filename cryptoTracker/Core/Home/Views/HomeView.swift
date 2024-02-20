@@ -20,6 +20,7 @@ struct HomeView: View {
             // content layer
             VStack {
                 homeHeader
+                SearchBarView(searchText: vm.bindingSearchText)
                 // coins list
                 columnHeaders
                 if !showPortfolio {

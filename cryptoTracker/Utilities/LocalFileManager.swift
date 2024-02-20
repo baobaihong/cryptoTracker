@@ -13,6 +13,7 @@ class LocalFileManager {
     static let instance = LocalFileManager()
     private init() { }
     
+    // take image, imageName and folderName as argument, and try to save image to local cache
     func saveImage(image: UIImage, imageName: String, folderName: String) {
         // create folder if needed
         createFolderIfNeeded(folderName: folderName)
@@ -31,6 +32,7 @@ class LocalFileManager {
         }
     }
     
+    // try to retrieve image from local cache using imageName and folderName
     func getImage(imageName: String, folderName: String) -> UIImage? {
         guard
             let url = getURLForImage(imageName: imageName, folderName: folderName),
@@ -40,6 +42,7 @@ class LocalFileManager {
         return UIImage(contentsOfFile: url.path())
     }
     
+    // create folder for the image
     private func createFolderIfNeeded(folderName: String) {
         guard let url = getURLForFolder(folderName: folderName) else { return }
         if !FileManager.default.fileExists(atPath: url.path()) {
@@ -50,7 +53,7 @@ class LocalFileManager {
             }
         }
     }
-    
+    // generate the url for the folder that stores the image
     private func getURLForFolder(folderName: String) -> URL? {
         guard let url = FileManager.default.urls(for: .cachesDirectory, in: .userDomainMask).first else {
             return nil
