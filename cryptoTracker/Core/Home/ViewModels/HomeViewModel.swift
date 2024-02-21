@@ -39,6 +39,7 @@ import SwiftUI
     }
     private var searchTextPublisher = CurrentValueSubject<String, Never>("")
     
+    // data service responsible for downloading and decode JSON
     private let dataService = CoinDataService()
     private var cancellables = Set<AnyCancellable>()
     
