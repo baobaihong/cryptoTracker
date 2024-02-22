@@ -12,7 +12,11 @@ import SwiftUI
 @Observable class HomeViewModel {
     
     var statistics: [StatisticModel] = []
-    var allCoins: [CoinModel] = []
+    var allCoins: [CoinModel] = [] {
+        didSet {
+            self.allCoinsPublisher.send(allCoins)
+        }
+    }
     var portfolioCoins: [CoinModel] = []
     
     // declare a publish var and a binding at the same time
@@ -39,26 +43,28 @@ import SwiftUI
     private let marketDataService = MarketDataService()
     private var cancellables = Set<AnyCancellable>()
     
+    // Core Data Service for user's portfolio
+    private let portfolioDataService = PortfolioDataService()
+    
+    private var allCoinsPublisher = CurrentValueSubject<[CoinModel], Never>([])
+    
     init() {
         addSubscribers()
     }
     
     func addSubscribers() {
         /* because the searchTextPublish has already do the job, this first publisher is no longer needed
-        // dataService.$allCoins
-        //     .sink { [weak self] returnedCoins in
-        //         self?.allCoins = returnedCoins
-        //      }
-        //      .store(in: &cancellables)
+         // dataService.$allCoins
+         //     .sink { [weak self] returnedCoins in
+         //         self?.allCoins = returnedCoins
+         //      }
+         //      .store(in: &cancellables)
          */
         
         // Combine the searchTextPublisher and coinDataService
         searchTextPublisher
-            .combineLatest(coinDataService.$allCoins)
-            // this subscriber now subscribe both searchTextPublisher and allCoins
-            // either of publisher updates, this subscriber will receive the updates and perform task below
-            .debounce(for: .seconds(0.5), scheduler: DispatchQueue.main)
-            // To improve efficiency, use debounce to wait for 0.5 seconds before preforming tasks
+            .combineLatest(coinDataService.$allCoins) // this subscriber now subscribe both searchTextPublisher and allCoins. Either of publisher updates, this subscriber will receive the updates and perform task below
+            .debounce(for: .seconds(0.5), scheduler: DispatchQueue.main) // To improve efficiency, use debounce to wait for 0.5 seconds before preforming tasks
             .map(filterCoins)
             .sink { [weak self] returnedCoins in
                 self?.allCoins = returnedCoins
@@ -67,14 +73,34 @@ import SwiftUI
         
         // Subscriber of marketDataService
         marketDataService.$marketData
-            // map GlobalData -> MarketDataModel
+        // map GlobalData -> MarketDataModel
             .map(mapGlobalMarketData)
             .sink { [weak self] returnedStats in
                 self?.statistics = returnedStats
             }
             .store(in: &cancellables)
         
+        // Subscriber of portfolio, update portfolioCoins: core data -> view model
+        allCoinsPublisher
+            .combineLatest(portfolioDataService.$savedEntities) // since portfolioDataService only updates as PortfolioEntity type, but we need to store the portfolio coins as CoinModel type, therefore allCoins(the filtered version of all coins fetched) need to be combined
+            .map { coinModels, portfolioEntities -> [CoinModel] in
+                coinModels
+                    .compactMap { coin -> CoinModel? in
+                        guard let entity = portfolioEntities.first(where: { $0.coinID == coin.id }) else {
+                            return nil
+                        }
+                        return coin.updateHoldings(amount: entity.amount) // only update the 'currentHolding' property of this CoinModel and return it.
+                    }
+            }
+            .sink { [weak self] returnedCoins in
+                self?.portfolioCoins = returnedCoins
+            }
+            .store(in: &cancellables)
         
+    }
+    
+    func updatePortfolio(coin: CoinModel, amount: Double) {
+        portfolioDataService.updatePortfolio(coin: coin, amount: amount)
     }
     
     private func filterCoins(text: String, coins: [CoinModel]) -> [CoinModel] {
