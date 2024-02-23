@@ -11,6 +11,9 @@ struct HomeView: View {
     @Environment(HomeViewModel.self) var vm
     @State private var showPortfolio: Bool = false // animate right
     @State private var showPortfolioView: Bool = false // new sheet
+    // build custom segue to detail view
+    @State private var selectedCoin: CoinModel? = nil
+    @State private var showDetailView: Bool = false
     
     var body: some View {
         ZStack {
@@ -22,7 +25,6 @@ struct HomeView: View {
                     PortfolioView()
                         .environment(vm)
                 })
-            
             // content layer
             VStack {
                 homeHeader
@@ -40,6 +42,9 @@ struct HomeView: View {
                 Spacer(minLength: 0)
             }
             
+        }
+        .navigationDestination(isPresented: $showDetailView) {
+            DetailLoadingView(coin: $selectedCoin)
         }
     }
 }
@@ -77,8 +82,13 @@ extension HomeView {
     private var allCoinsList: some View {
         List {
             ForEach(vm.allCoins) { coin in
+                // we're not using navigationLink because it's inefficient.
+                // it will try to create the list items' subview on screen before using
                 CoinRowView(coin: coin, showHoldingsColumn: false)
                     .listRowInsets(.init(top: 10, leading: 0, bottom: 10, trailing: 10))
+                    .onTapGesture {
+                        segue(coin: coin)
+                    }
             }
         }
         .listStyle(PlainListStyle())
@@ -92,6 +102,9 @@ extension HomeView {
             ForEach(vm.portfolioCoins) { coin in
                 CoinRowView(coin: coin, showHoldingsColumn: true)
                     .listRowInsets(.init(top: 10, leading: 0, bottom: 10, trailing: 10))
+                    .onTapGesture {
+                        segue(coin: coin)
+                    }
             }
         }
         .listStyle(PlainListStyle())
@@ -141,6 +154,11 @@ extension HomeView {
         .font(.caption)
         .foregroundStyle(Color.theme.secondaryText)
         .padding(.horizontal)
+    }
+    
+    private func segue(coin: CoinModel) {
+        selectedCoin = coin
+        showDetailView.toggle()
     }
 }
 
