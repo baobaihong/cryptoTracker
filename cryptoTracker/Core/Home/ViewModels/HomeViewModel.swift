@@ -55,7 +55,7 @@ import SwiftUI
     private var portfolioCoinsPublisher = CurrentValueSubject<[CoinModel], Never>([])
     
     // Sorting functionality
-    var sortOption: SortOption = .holdings {
+    var sortOption: SortOption = .rank {
         didSet {
             self.sortOptionPublisher.send(sortOption)
         }
@@ -126,9 +126,9 @@ import SwiftUI
     private func sortCoins(sort: SortOption, coins: inout [CoinModel]) { // inout parameter change the 'coins' parameter directly without creating new
         switch sort {
         case .rank, .holdings:
-            coins.sort(by: { $0.rank > $1.rank }) // use .sort instead of .sorted to sort in place
+            coins.sort(by: { $0.rank < $1.rank }) // use .sort instead of .sorted to sort in place
         case .rankReversed, .holdingsReversed:
-            coins.sort(by: { $0.rank < $1.rank })
+            coins.sort(by: { $0.rank > $1.rank })
         case .price:
             coins.sort(by: { $0.currentPrice > $1.currentPrice })
         case .priceReversed:

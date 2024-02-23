@@ -21,18 +21,24 @@ struct DetailLoadingView: View {
 }
 
 struct DetailView: View {
-    let coin: CoinModel
+    @State var vm: DetailViewModel
     
     init(coin: CoinModel) {
-        self.coin = coin
-        print("initializing detail view for: \(coin.name)")
+        self._vm = State(wrappedValue: DetailViewModel(coin: coin))
     }
     
     var body: some View {
-        Text(coin.name)
+        ScrollView {
+            VStack(spacing: 20.0) {
+                
+            }
+        }
+        .navigationTitle(vm.coin.name)
     }
 }
 
 #Preview {
-    DetailView(coin: pd().coin)
+    NavigationStack {
+        DetailView(coin: pd().coin)
+    }
 }
