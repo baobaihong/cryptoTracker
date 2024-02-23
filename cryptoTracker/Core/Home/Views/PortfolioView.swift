@@ -17,11 +17,10 @@ struct PortfolioView: View {
         NavigationStack {
             ScrollView {
                 VStack(alignment: .leading, spacing: 0.0) {
-                    SearchBarView(searchText: vm.bindingSearchText)
-                    coinLogoList
-                    
+                    SearchBarView(searchText: vm.bindingSearchText) // searchBar
+                    coinLogoList // a list of coin logo, tap to show portfolio input section
                     if selectedCoin != nil {
-                        portfolioInputSection
+                        portfolioInputSection // a table for input current holding and update value correspondingly
                     }
                 }
             }
@@ -34,7 +33,7 @@ struct PortfolioView: View {
                     trailingNavBarButtons
                 }
             }
-            .onChange(of: vm.searchText) { _, newValue in
+            .onChange(of: vm.searchText) { _, newValue in //  if user clear out the search bar text, de-select the coin
                 if newValue == "" {
                     removeSelectedCoin()
                 }
@@ -48,7 +47,7 @@ extension PortfolioView {
     private var coinLogoList: some View {
         ScrollView(.horizontal) {
             LazyHStack(spacing: 10) {
-                ForEach(vm.searchText.isEmpty ? vm.portfolioCoins : vm.allCoins) { coin in
+                ForEach(vm.searchText.isEmpty ? vm.portfolioCoins : vm.allCoins) { coin in // <- show portfolio coins only when user has hold any coins
                     CoinLogoView(coin: coin)
                         .frame(width: 75)
                         .padding(4)
@@ -97,6 +96,7 @@ extension PortfolioView {
         .font(.headline)
     }
     
+    // show input table and update the quantityText if user already hold this coin
     private func updateSelectedCoin(coin: CoinModel) {
         selectedCoin = coin
         
@@ -108,6 +108,7 @@ extension PortfolioView {
         }
     }
     
+    // update the 'total value' column when user input current holding
     private func getCurrentValue() -> Double {
         if let quantity = Double(quantityText) {
             return quantity * (selectedCoin?.currentPrice ?? 0)
@@ -115,6 +116,7 @@ extension PortfolioView {
         return 0
     }
     
+    // save button
     private var trailingNavBarButtons: some View {
         HStack(spacing: 2) {
             Image(systemName: "checkmark")
@@ -133,6 +135,7 @@ extension PortfolioView {
         .foregroundStyle(showCheckmark ? Color.theme.green : Color.theme.accent)
     }
     
+    // press the save button
     private func saveButtonPressed() {
         guard
             let coin = selectedCoin,
@@ -151,7 +154,7 @@ extension PortfolioView {
         // hide keyboard
         UIApplication.shared.endEditing()
         
-        // hide checkmark
+        // hide checkmark after 2s
         DispatchQueue.main.asyncAfter(deadline: .now() + 2.0 , execute: DispatchWorkItem(block: {
             withAnimation(.easeOut) {
                 showCheckmark = false
