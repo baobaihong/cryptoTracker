@@ -50,10 +50,21 @@ import SwiftUI
     
     // Core Data Service for user's portfolio
     private let portfolioDataService = PortfolioDataService()
-    // publisher for self.allCoins
+    // publisher for self.allCoins and self.portfolioCoins Publisher
     private var allCoinsPublisher = CurrentValueSubject<[CoinModel], Never>([])
-    // publisher for self.portfolioCoins
     private var portfolioCoinsPublisher = CurrentValueSubject<[CoinModel], Never>([])
+    
+    // Sorting functionality
+    var sortOption: SortOption = .holdings {
+        didSet {
+            self.sortOptionPublisher.send(sortOption)
+        }
+    }
+    enum SortOption {
+        case rank, rankReversed, holdings, holdingsReversed, price, priceReversed
+    }
+    private var sortOptionPublisher = CurrentValueSubject<SortOption, Never>(.holdings)
+    
     
     init() {
         addSubscribers()
@@ -62,9 +73,9 @@ import SwiftUI
     func addSubscribers() {
         // 1. update allCoins
         searchTextPublisher
-            .combineLatest(coinDataService.$allCoins) // this subscriber now subscribe both searchTextPublisher and allCoins. Either of publisher updates, this subscriber will receive the updates and perform task below
+            .combineLatest(coinDataService.$allCoins, sortOptionPublisher) // this subscriber now subscribe both searchTextPublisher and allCoins. Either of publisher updates, this subscriber will receive the updates and perform task below
             .debounce(for: .seconds(0.5), scheduler: DispatchQueue.main) // To improve efficiency, use debounce to wait for 0.5 seconds before preforming tasks
-            .map(filterCoins)
+            .map(filterAndSortCoins)
             .sink { [weak self] returnedCoins in
                 self?.allCoins = returnedCoins
             }
@@ -75,7 +86,8 @@ import SwiftUI
             .combineLatest(portfolioDataService.$savedEntities) // since portfolioDataService only updates as PortfolioEntity type, but we need to store the portfolio coins as CoinModel type, therefore allCoins(the filtered version of all coins fetched) need to be combined
             .map(mapAllCoins2PortfolioCoins)
             .sink { [weak self] returnedCoins in
-                self?.portfolioCoins = returnedCoins
+                guard let self = self else { return }
+                self.portfolioCoins = self.sortPortfolioCoinsIfNeeded(coins: returnedCoins)
             }
             .store(in: &cancellables)
         
@@ -102,6 +114,38 @@ import SwiftUI
         coinDataService.getCoins()
         marketDataService.getMarketData()
         HapticManager.notification(type: .success)
+    }
+    
+    private func filterAndSortCoins(text: String, coins: [CoinModel], sort: SortOption) -> [CoinModel] {
+        var updatedCoins = filterCoins(text: text, coins: coins)
+        //sort in place to improve efficiency
+        sortCoins(sort: sort, coins: &updatedCoins)
+        return updatedCoins
+    }
+    
+    private func sortCoins(sort: SortOption, coins: inout [CoinModel]) { // inout parameter change the 'coins' parameter directly without creating new
+        switch sort {
+        case .rank, .holdings:
+            coins.sort(by: { $0.rank > $1.rank }) // use .sort instead of .sorted to sort in place
+        case .rankReversed, .holdingsReversed:
+            coins.sort(by: { $0.rank < $1.rank })
+        case .price:
+            coins.sort(by: { $0.currentPrice > $1.currentPrice })
+        case .priceReversed:
+            coins.sort(by: { $0.currentPrice < $1.currentPrice })
+        }
+    }
+    
+    private func sortPortfolioCoinsIfNeeded(coins: [CoinModel]) -> [CoinModel] {
+        // only sort by holdings or reversedholdings if needed
+        switch sortOption {
+        case .holdings:
+            return coins.sorted(by: { $0.currentHoldingsValue > $1.currentHoldingsValue })
+        case .holdingsReversed:
+            return coins.sorted(by: { $0.currentHoldingsValue < $1.currentHoldingsValue })
+        default:
+            return coins
+        }
     }
     
     // filter searchbar input + coin data service -> allCoins
