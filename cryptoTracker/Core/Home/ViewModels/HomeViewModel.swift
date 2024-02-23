@@ -17,7 +17,12 @@ import SwiftUI
             self.allCoinsPublisher.send(allCoins)
         }
     }
-    var portfolioCoins: [CoinModel] = []
+    var isLoading: Bool = false
+    var portfolioCoins: [CoinModel] = [] {
+        didSet {
+            self.portfolioCoinsPublisher.send(portfolioCoins)
+        }
+    }
     
     // declare a publish var and a binding at the same time
     /*
@@ -45,23 +50,17 @@ import SwiftUI
     
     // Core Data Service for user's portfolio
     private let portfolioDataService = PortfolioDataService()
-    
+    // publisher for self.allCoins
     private var allCoinsPublisher = CurrentValueSubject<[CoinModel], Never>([])
+    // publisher for self.portfolioCoins
+    private var portfolioCoinsPublisher = CurrentValueSubject<[CoinModel], Never>([])
     
     init() {
         addSubscribers()
     }
     
     func addSubscribers() {
-        /* because the searchTextPublish has already do the job, this first publisher is no longer needed
-         // dataService.$allCoins
-         //     .sink { [weak self] returnedCoins in
-         //         self?.allCoins = returnedCoins
-         //      }
-         //      .store(in: &cancellables)
-         */
-        
-        // Combine the searchTextPublisher and coinDataService
+        // 1. update allCoins
         searchTextPublisher
             .combineLatest(coinDataService.$allCoins) // this subscriber now subscribe both searchTextPublisher and allCoins. Either of publisher updates, this subscriber will receive the updates and perform task below
             .debounce(for: .seconds(0.5), scheduler: DispatchQueue.main) // To improve efficiency, use debounce to wait for 0.5 seconds before preforming tasks
@@ -71,38 +70,41 @@ import SwiftUI
             }
             .store(in: &cancellables)
         
-        // Subscriber of marketDataService
-        marketDataService.$marketData
-        // map GlobalData -> MarketDataModel
-            .map(mapGlobalMarketData)
-            .sink { [weak self] returnedStats in
-                self?.statistics = returnedStats
-            }
-            .store(in: &cancellables)
-        
-        // Subscriber of portfolio, update portfolioCoins: core data -> view model
+        // 2. update portfolioCoins
         allCoinsPublisher
             .combineLatest(portfolioDataService.$savedEntities) // since portfolioDataService only updates as PortfolioEntity type, but we need to store the portfolio coins as CoinModel type, therefore allCoins(the filtered version of all coins fetched) need to be combined
-            .map { coinModels, portfolioEntities -> [CoinModel] in
-                coinModels
-                    .compactMap { coin -> CoinModel? in
-                        guard let entity = portfolioEntities.first(where: { $0.coinID == coin.id }) else {
-                            return nil
-                        }
-                        return coin.updateHoldings(amount: entity.amount) // only update the 'currentHolding' property of this CoinModel and return it.
-                    }
-            }
+            .map(mapAllCoins2PortfolioCoins)
             .sink { [weak self] returnedCoins in
                 self?.portfolioCoins = returnedCoins
             }
             .store(in: &cancellables)
         
+        // 3. update marketDataService
+        marketDataService.$marketData
+            .combineLatest(portfolioCoinsPublisher)
+            .map(mapGlobalMarketData)
+            .sink { [weak self] returnedStats in
+                self?.statistics = returnedStats
+                self?.isLoading = false // <- after manually reload, reset the isLoading to false
+            }
+            .store(in: &cancellables)
+        
     }
     
+    // Portfolio coins update: view -> viewModel -> core data
     func updatePortfolio(coin: CoinModel, amount: Double) {
         portfolioDataService.updatePortfolio(coin: coin, amount: amount)
     }
     
+    // manually reload the coin and market data
+    func reloadData() {
+        isLoading = false
+        coinDataService.getCoins()
+        marketDataService.getMarketData()
+        HapticManager.notification(type: .success)
+    }
+    
+    // filter searchbar input + coin data service -> allCoins
     private func filterCoins(text: String, coins: [CoinModel]) -> [CoinModel] {
         guard !text.isEmpty else {
             return coins
@@ -116,7 +118,19 @@ import SwiftUI
         }
     }
     
-    private func mapGlobalMarketData(marketDataModel: MarketDataModel?) -> [StatisticModel] {
+    //map allCoins + PortfolioEntity -> PortfolioCoins
+    private func mapAllCoins2PortfolioCoins(allCoins: [CoinModel], portfolioEntities: [PortfolioEntity]) -> [CoinModel] {
+        allCoins
+            .compactMap { coin -> CoinModel? in
+                guard let entity = portfolioEntities.first(where: { $0.coinID == coin.id }) else {
+                    return nil
+                }
+                return coin.updateHoldings(amount: entity.amount) // only update the 'currentHolding' property of this CoinModel and return it.
+            }
+    }
+    
+    // map GlobalData + PortfolioCoins -> statistics
+    private func mapGlobalMarketData(marketDataModel: MarketDataModel?, portfolioCoins: [CoinModel]) -> [StatisticModel] {
         var stats: [StatisticModel] = []
         guard let data = marketDataModel else { return stats }
         let marketCap = StatisticModel(
@@ -129,10 +143,30 @@ import SwiftUI
         let btcDominance = StatisticModel(
             title: "BTC Dominance",
             value: data.btcDominance)
+        
+        let portfolioValue = // map PortfolioCoins -> sum of the portfolio coins' holding value
+        portfolioCoins
+            .map({ $0.currentHoldingsValue }) // read current holding value for each portfolio coins
+            .reduce(0, +) // calculate the sum of [double]
+        
+        let previousValue = // calculate the 24H change percentage for portfolio coin holding value
+        portfolioCoins
+            .map { coin -> Double in
+                let currentValue = coin.currentHoldingsValue
+                if let percentChange = coin.priceChangePercentage24H { // 25% -> 0.25
+                    return currentValue / (1 + percentChange / 100)
+                } else {
+                    return 0.00
+                }
+            }
+            .reduce(0, +)
+        // percentageChange = (new - old) / old
+        let percentageChange = ((portfolioValue - previousValue) / previousValue) * 100
+        
         let portfolio = StatisticModel(
             title: "Portfolio Value",
-            value: "$0.00",
-            percentageChange: 0)
+            value: portfolioValue.asCurrencyWith2Decimals(),
+            percentageChange: percentageChange)
         stats.append(contentsOf: [
             marketCap,
             volume,
