@@ -12,6 +12,9 @@ import Combine
 class DetailViewModel {
     var overViewStatistics: [StatisticModel] = []
     var additionalStatistics: [StatisticModel] = []
+    var coinDescription: String? = nil
+    var websiteURL: String? = nil
+    var redditURL: String? = nil
     
     var coin: CoinModel {
         didSet {
@@ -35,6 +38,14 @@ class DetailViewModel {
             .sink { [weak self] returnedArrays in
                 self?.overViewStatistics = returnedArrays.overview
                 self?.additionalStatistics = returnedArrays.additional
+            }
+            .store(in: &cancellables)
+        
+        coinDetailService.$coinDetails
+            .sink { [weak self] returnedCoinDetails in
+                self?.coinDescription = returnedCoinDetails?.readableDescription
+                self?.websiteURL = returnedCoinDetails?.links?.homepage?.first
+                self?.redditURL = returnedCoinDetails?.links?.subredditURL
             }
             .store(in: &cancellables)
     }
