@@ -34,28 +34,36 @@ struct DetailView: View {
     
     var body: some View {
         ScrollView {
-            VStack(spacing: 20.0) {
-                Text("")
-                    .frame(height: 150)
-                // overview section
-                overviewTitle
-                Divider()
-                overviewGrid
-                // addtional section
-                additionalTitle
-                Divider()
-                additionalGrid
+            VStack {
+                ChartView(coin: vm.coin)
+                    .padding(.vertical)
+                
+                VStack(spacing: 20.0) {
+                    // overview section
+                    overviewTitle
+                    Divider()
+                    overviewGrid
+                    // addtional section
+                    additionalTitle
+                    Divider()
+                    additionalGrid
+                }
+                .padding()
             }
-            .padding()
         }
         .navigationTitle(vm.coin.name)
+        .toolbar {
+            ToolbarItem(placement: .topBarTrailing) {
+                toolbarTrailingItems
+            }
+        }
     }
 }
 
 extension DetailView {
     private var overviewTitle: some View {
         Text("Overview")
-            .font(.title)
+            .font(.title3)
             .bold()
             .foregroundStyle(Color.theme.accent)
             .frame(maxWidth: .infinity, alignment: .leading)
@@ -63,7 +71,7 @@ extension DetailView {
     
     private var additionalTitle: some View {
         Text("Additional Details")
-            .font(.title)
+            .font(.title3)
             .bold()
             .foregroundStyle(Color.theme.accent)
             .frame(maxWidth: .infinity, alignment: .leading)
@@ -93,6 +101,16 @@ extension DetailView {
                     StatisticView(stat: stat)
                 }
         })
+    }
+    
+    private var toolbarTrailingItems: some View {
+        HStack {
+            Text(vm.coin.symbol.uppercased())
+                .font(.headline)
+                .foregroundStyle(Color.theme.secondaryText)
+            CoinImageView(coin: vm.coin)
+                .frame(width: 25, height: 25)
+        }
     }
 }
 
