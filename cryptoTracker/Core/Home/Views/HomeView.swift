@@ -14,6 +14,7 @@ struct HomeView: View {
     // build custom segue to detail view
     @State private var selectedCoin: CoinModel? = nil
     @State private var showDetailView: Bool = false
+    @State private var showSettingsView: Bool = false
     
     var body: some View {
         ZStack {
@@ -24,6 +25,9 @@ struct HomeView: View {
                     // the sheet is not in the current environment as well as NavigationStack
                     PortfolioView()
                         .environment(vm)
+                })
+                .sheet(isPresented: $showSettingsView, content: {
+                    SettingsView()
                 })
             // content layer
             VStack {
@@ -57,6 +61,8 @@ extension HomeView {
                 .onTapGesture {
                     if showPortfolio {
                         showPortfolioView.toggle()
+                    } else {
+                        showSettingsView.toggle()
                     }
                 }
                 .background(
