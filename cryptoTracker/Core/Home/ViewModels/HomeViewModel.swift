@@ -205,7 +205,7 @@ import SwiftUI
             }
             .reduce(0, +)
         // percentageChange = (new - old) / old
-        let percentageChange = ((portfolioValue - previousValue) / previousValue) * 100
+        let percentageChange = ((portfolioValue - previousValue) / previousValue)
         
         let portfolio = StatisticModel(
             title: "Portfolio Value",

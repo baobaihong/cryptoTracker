@@ -15,9 +15,10 @@ class NetworkingManager {
     // when the task complete, it publishes either a tuple that contains the fetched data + URLResponse, or an error if the task fails
     static func download(url: URL) -> AnyPublisher<Data, any Error> {
         return URLSession.shared.dataTaskPublisher(for: url)
-            .subscribe(on: DispatchQueue.global(qos: .default))
+            // .subscribe(on: DispatchQueue.global(qos: .default)) // <- default run on background thread
             .tryMap { try handleURLResponse(output: $0, url: url) }
-            .receive(on: DispatchQueue.main)
+            // .receive(on: DispatchQueue.main) // <- manually change the task to the main thread, changed after the decode because the decode task is heavy.
+            .retry(3) // <- retry task 3 times max
             .eraseToAnyPublisher()
     }
     

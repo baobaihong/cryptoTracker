@@ -32,7 +32,6 @@
 		96757D632B84EC840034E77E /* MarketDataModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 96757D622B84EC840034E77E /* MarketDataModel.swift */; };
 		96757D652B84F45F0034E77E /* MarketDataService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 96757D642B84F45F0034E77E /* MarketDataService.swift */; };
 		96AEEECF2B805E7C00546404 /* cryptoTrackerApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = 96AEEECE2B805E7C00546404 /* cryptoTrackerApp.swift */; };
-		96AEEED12B805E7C00546404 /* ContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 96AEEED02B805E7C00546404 /* ContentView.swift */; };
 		96AEEED62B805E7D00546404 /* Preview Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 96AEEED52B805E7D00546404 /* Preview Assets.xcassets */; };
 		96AEEEDD2B805FB200546404 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 96AEEEDC2B805FB200546404 /* Assets.xcassets */; };
 		96AEEEE02B80617200546404 /* Color.swift in Sources */ = {isa = PBXBuildFile; fileRef = 96AEEEDF2B80617200546404 /* Color.swift */; };
@@ -78,7 +77,6 @@
 		96757D642B84F45F0034E77E /* MarketDataService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MarketDataService.swift; sourceTree = "<group>"; };
 		96AEEECB2B805E7C00546404 /* cryptoTracker.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = cryptoTracker.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		96AEEECE2B805E7C00546404 /* cryptoTrackerApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = cryptoTrackerApp.swift; sourceTree = "<group>"; };
-		96AEEED02B805E7C00546404 /* ContentView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContentView.swift; sourceTree = "<group>"; };
 		96AEEED52B805E7D00546404 /* Preview Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = "Preview Assets.xcassets"; sourceTree = "<group>"; };
 		96AEEEDC2B805FB200546404 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; name = Assets.xcassets; path = ../../Resources/Assets.xcassets; sourceTree = "<group>"; };
 		96AEEEDF2B80617200546404 /* Color.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Color.swift; sourceTree = "<group>"; };
@@ -179,7 +177,6 @@
 				96AEEEF82B81FAEB00546404 /* Services */,
 				96AEEEED2B81A87700546404 /* Models */,
 				96AEEEE12B8067F600546404 /* Core */,
-				96AEEED02B805E7C00546404 /* ContentView.swift */,
 				96AEEEDC2B805FB200546404 /* Assets.xcassets */,
 				96AEEED42B805E7D00546404 /* Preview Content */,
 			);
@@ -405,7 +402,6 @@
 				96AEEEF12B81B6A300546404 /* CoinRowView.swift in Sources */,
 				963E04CF2B88E09C000E064C /* Date.swift in Sources */,
 				96AEEEF72B81D70700546404 /* HomeViewModel.swift in Sources */,
-				96AEEED12B805E7C00546404 /* ContentView.swift in Sources */,
 				337CA6CF2B8325140043FF04 /* LocalFileManager.swift in Sources */,
 				96757D632B84EC840034E77E /* MarketDataModel.swift in Sources */,
 				96AEEEE62B80682F00546404 /* HomeView.swift in Sources */,
